@@ -1,7 +1,7 @@
 <template>
   <li>
     <router-link
-      :to="`${index}`"
+      :to="`/${index}`"
       class="nav-link"
       active-class="active"
       aria-current="page"
