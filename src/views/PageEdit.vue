@@ -1,10 +1,11 @@
 <template>
+  <h4>Edit {{ page.pageTitle }}</h4>
   <form class="container mb-3">
     <div class="row">
       <div class="col-md-8">
         <div class="mb-3">
           <label for="" class="form-label"> Page Title </label>
-          <input type="text " class="form-control" v-model="pageTitle" />
+          <input type="text " class="form-control" v-model="page.pageTitle" />
         </div>
         <div class="mb-3">
           <label for="" class="form-label"> Content </label>
@@ -12,14 +13,14 @@
             type="text "
             class="form-control"
             rows="5"
-            v-model="content"
+            v-model="page.content"
           />
         </div>
       </div>
       <div class="col">
         <div class="mb-3">
           <label for="" class="form-label"> Link Text </label>
-          <input type="text " class="form-control" v-model="linkText" />
+          <input type="text " class="form-control" v-model="page.link.text" />
         </div>
         <div class="row mb-3">
           <div class="form-check">
@@ -28,7 +29,7 @@
               name=""
               id=""
               class="form-check-input"
-              v-model="published"
+              v-model="page.published"
             />
             <label for="gridCheck1" class="form-check-label">Published</label>
           </div>
@@ -38,53 +39,38 @@
 
     <div class="mb-3">
       <button
-        class="btn btn-primary"
+        class="btn btn-primary me-2"
         :disabled="isFormInvalid"
-        @click.prevent="submitForm"
+        @click.prevent="submit"
       >
-        Create Page
+        Edit
       </button>
+      <button class="btn btn-secondary" @click="goToPageList">Cancel</button>
     </div>
   </form>
 </template>
-
 <script setup>
-import { inject, ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
-const bus = inject("$bus");
-const pages = inject("$pages");
+import { inject } from "vue";
+
 const router = useRouter();
+const pages = inject("$pages");
+const bus = inject("$bus");
 
-let pageTitle = ref("");
-let content = ref("");
-let linkText = ref("");
-let linkUrl = ref("");
-let published = ref(true);
+const { index } = defineProps(["index"]);
 
-function submitForm() {
-  if (!pageTitle || !content || !linkText) {
-    alert("Please fill all fields");
-    return;
-  }
-  let newPage = {
-    pageTitle: pageTitle.value,
-    content: content.value,
-    link: {
-      text: linkText.value,
-    },
-    published: published.value,
-  };
+let page = pages.getSinglePage(index);
 
-  pages.addPage(newPage);
-  bus.$emit("page-created", newPage);
-  router.push({ path: "/pages" });
+function submit() {
+  pages.editPage(index, page);
+  bus.$emit("page-updated", {
+    index,
+    page,
+  });
+  goToPageList();
 }
 
-const isFormInvalid = computed(() => !pageTitle || !content || !linkText);
-
-watch(pageTitle, (newTitle, oldTitle) => {
-  if (linkText.value === oldTitle) {
-    linkText.value = newTitle;
-  }
-});
+function goToPageList() {
+  router.push({ path: "/pages" });
+}
 </script>
