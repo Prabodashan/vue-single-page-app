@@ -1,5 +1,5 @@
 <template>
-  <Navbar :pages="pages" :active-page="activePage"></Navbar>
+  <Navbar></Navbar>
   <RouterView></RouterView>
   <!-- <PageViewer v-if="pages.length > 0" :page="pages[activePage]"></PageViewer>
 
@@ -17,25 +17,7 @@ export default {
     PageViewer,
     CreatePage,
   },
-  created() {
-    this.getPages();
-
-    this.$bus.$on("navbarLinkActivated", (index) => {
-      this.activePage = index;
-    });
-  },
-  data() {
-    return {
-      activePage: 0,
-      pages: [],
-    };
-  },
   methods: {
-    async getPages() {
-      let res = await fetch("pages.json");
-      let data = await res.json();
-      this.pages = data;
-    },
     pageCreated(pageObj) {
       this.pages.push(pageObj);
     },
