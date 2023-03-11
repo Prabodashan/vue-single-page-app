@@ -45,6 +45,7 @@
       >
         Edit
       </button>
+      <button class="btn btn-danger me-2" @click="deletePage">Delete</button>
       <button class="btn btn-secondary" @click="goToPageList">Cancel</button>
     </div>
   </form>
@@ -66,6 +67,14 @@ function submit() {
   bus.$emit("page-updated", {
     index,
     page,
+  });
+  goToPageList();
+}
+
+function deletePage() {
+  pages.removePage(index);
+  bus.$emit('page-deleted', {
+    index,
   });
   goToPageList();
 }
